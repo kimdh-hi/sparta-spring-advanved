@@ -58,9 +58,13 @@ public class FolderService {
 
     // 회원 ID 가 소유한 폴더에 저장되어 있는 상품들 조회
     public Page<Product> getProductsOnFolder(User user, int page, int size, String sortBy, boolean isAsc, Long folderId) {
+
+        // ====페이징 요청 템플릿====
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, sortBy);
         Pageable pageable = PageRequest.of(page, size, sort);
+        // ====페이징 요청 템플릿====
+
         return productRepository.findAllByUserIdAndFolderList_Id(user.getId(), folderId, pageable);
     }
 }
