@@ -38,8 +38,8 @@ public class Product extends Timestamped {
     @Column(nullable = false)
     private Long userId;
 
-//    @ManyToMany
-//    private List<Folder> folderList;
+    @ManyToMany
+    private List<Folder> folderList;
 
     // oneToMany -> 조인테이블 <- oneToMany 로 연결해보기
 

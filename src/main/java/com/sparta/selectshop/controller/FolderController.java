@@ -3,10 +3,13 @@ package com.sparta.selectshop.controller;
 import com.sparta.selectshop.domain.Folder;
 import com.sparta.selectshop.domain.Product;
 import com.sparta.selectshop.dto.FolderCreateRequestDto;
+import com.sparta.selectshop.exception.ApiException;
 import com.sparta.selectshop.security.UserDetailsImpl;
 import com.sparta.selectshop.service.FolderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -46,4 +49,17 @@ public class FolderController {
         page = page - 1;
         return folderService.getProductsOnFolder(userDetails.getUser(), page, size, sortBy, isAsc, folderId);
     }
+
+//    @ExceptionHandler({ IllegalArgumentException.class })
+//    public ResponseEntity<Object> handle(IllegalArgumentException ex) {
+//        ApiException apiException = new ApiException(
+//                ex.getMessage(),
+//                HttpStatus.BAD_REQUEST
+//        );
+//
+//        return new ResponseEntity<>(
+//                apiException,
+//                HttpStatus.BAD_REQUEST
+//        );
+//    }
 }

@@ -20,15 +20,20 @@ public class UserTime {
     @JoinColumn(nullable = false)
     private User user;
 
+    @Column(nullable = false, columnDefinition = "bigint default 0")
+    private int totalCount;
+
     @Column(nullable = false)
     private long totalTime;
 
-    public UserTime(User user, long totalTime) {
+    public UserTime(User user, long totalTime, int totalCount) {
         this.user = user;
         this.totalTime = totalTime;
+        this.totalCount = totalCount;
     }
 
-    public void updateTotalTime(long totalTime) {
+    public void updateTotalTimeAndCallCount(long totalTime, int totalCount) {
         this.totalTime = totalTime;
+        this.totalCount = totalCount;
     }
 }

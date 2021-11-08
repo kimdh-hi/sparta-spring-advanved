@@ -45,13 +45,16 @@ public class UserTimeAop {
                 // 수행시간 및 DB 에 기록
                 UserTime userTime = userTimeRepository.findByUser(loginUser);
                 if (userTime != null) {
+
+                    int callCount = userTime.getCallCount();
+                    callCount++;
                     // 로그인 회원의 기록이 있으면
                     long totalTime = userTime.getTotalTime();
                     totalTime = totalTime + runTime;
-                    userTime.updateTotalTime(totalTime);
+                    userTime.updateTotalTimeAndCallCount(totalTime, callCount);
                 } else {
                     // 로그인 회원의 기록이 없으면
-                    userTime = new UserTime(loginUser, runTime);
+                    userTime = new UserTime(loginUser, runTime, 1);
                 }
 
                 System.out.println("[User Time] User: " + userTime.getUser().getUsername() + ", Total Time: " + userTime.getTotalTime() + " ms");

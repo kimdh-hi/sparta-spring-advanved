@@ -3,6 +3,7 @@ package com.sparta.selectshop.service;
 import com.sparta.selectshop.domain.Folder;
 import com.sparta.selectshop.domain.Product;
 import com.sparta.selectshop.domain.User;
+import com.sparta.selectshop.exception.ApiRequestException;
 import com.sparta.selectshop.repository.FolderRepository;
 import com.sparta.selectshop.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,26 +36,27 @@ public class FolderService {
         return folderRepository.findAllByUser(user);
     }
 
+    @Transactional(readOnly = false)
     public List<Folder> createFolders(List<String> folderNameList, User user) {
 
-        List<Folder> existFolderList = folderRepository.findAllByUserAndNameIn(user, folderNameList);
-
         List<Folder> folderList = new ArrayList<>();
+
         for (String folderName : folderNameList) {
-            boolean flag = true;
-            for (Folder folder : existFolderList) {
-                if (folder.getName().equals(folderName)) {
-                    flag = false;
-                    break;
-                }
+            // 1) DB 에 폴더명이 folderName 인 폴더가 존재하는지?
+            Folder folderInDB = folderRepository.findByName(folderName);
+            if (folderInDB != null) {
+                // DB 에 중복 폴더명 존재한다면 Exception 발생시킴
+                throw new ApiRequestException("중복된 폴더명 ('" + folderName + "') 을 삭제하고 재시도해 주세요!");
             }
-            if (flag) {
-                Folder folder = new Folder(folderName, user);
-                folderList.add(folder);
-            }
+
+            // 2) 폴더를 DB 에 저장
+            Folder folder = new Folder(folderName, user);
+            folder = folderRepository.save(folder);
+
+            // 3) folderList 에 folder Entity 객체를 추가
+            folderList.add(folder);
         }
 
-        folderList = folderRepository.saveAll(folderList);
         return folderList;
     }
 
