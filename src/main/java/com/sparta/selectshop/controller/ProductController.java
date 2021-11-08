@@ -1,7 +1,7 @@
 package com.sparta.selectshop.controller;
 
-
 import com.sparta.selectshop.domain.Product;
+import com.sparta.selectshop.domain.User;
 import com.sparta.selectshop.dto.ProductMypriceRequestDto;
 import com.sparta.selectshop.dto.ProductRequestDto;
 import com.sparta.selectshop.security.UserDetailsImpl;
@@ -11,8 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController // JSON으로 데이터를 주고받음을 선언합니다.
 public class ProductController {
@@ -29,8 +27,8 @@ public class ProductController {
     // 로그인한 회원이 등록한 상품들 조회
     @GetMapping("/api/products")
     public Page<Product> getProducts(
-            @RequestParam("page") int page, // 현재 페이지
-            @RequestParam("size") int size, // 요청 페이지 당 요소 수
+            @RequestParam("page") int page,
+            @RequestParam("size") int size,
             @RequestParam("sortBy") String sortBy,
             @RequestParam("isAsc") boolean isAsc,
             @AuthenticationPrincipal UserDetailsImpl userDetails
@@ -69,5 +67,16 @@ public class ProductController {
             @RequestParam("isAsc") boolean isAsc
     ) {
         return productService.getAllProducts(page , size, sortBy, isAsc);
+    }
+
+    // 상품에 폴더 추가
+    @PostMapping("/api/products/{id}/folder")
+    public Long addFolder(@PathVariable Long id,
+                          @RequestParam("folderId") Long folderId,
+                          @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        User user = userDetails.getUser();
+        Product product = productService.addFolder(id, folderId, user);
+        // 응답 보내기
+        return product.getId();
     }
 }

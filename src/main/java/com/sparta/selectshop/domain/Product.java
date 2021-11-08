@@ -5,15 +5,15 @@ import com.sparta.selectshop.utils.URLValidator;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Setter
 @Getter // get 함수를 일괄적으로 만들어줍니다.
 @NoArgsConstructor // 기본 생성자를 만들어줍니다.
 @Entity // DB 테이블 역할을 합니다.
-public class Product extends Timestamped{
-
+public class Product extends Timestamped {
     // ID가 자동으로 생성 및 증가합니다.
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
@@ -36,7 +36,13 @@ public class Product extends Timestamped{
     private int myprice;
 
     @Column(nullable = false)
-    private Long userId; // 상품을 등록한 사용자
+    private Long userId;
+
+//    @ManyToMany
+//    private List<Folder> folderList;
+
+    // oneToMany -> 조인테이블 <- oneToMany 로 연결해보기
+
 
     public Product(ProductRequestDto requestDto, Long userId) {
         // 입력값 Validation
@@ -69,7 +75,12 @@ public class Product extends Timestamped{
         this.myprice = 0;
     }
 
-    public void updateMyPrice(int myprice) {
-        this.myprice = myprice;
+    // 관심 상품의 가격 변경 시 사용합니다.
+    public void updateMyPrice(int price) {
+        this.myprice = price;
+    }
+
+    public void addFolder(Folder folder) {
+        this.folderList.add(folder);
     }
 }
